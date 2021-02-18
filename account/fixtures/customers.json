@@ -1,0 +1,26 @@
+[
+  {
+    "model": "account.customer",
+    "pk": 1,
+    "fields":{"name": "Arisha Barron"
+	}
+  },
+  {
+    "model": "account.customer",
+    "pk": 2,
+    "fields":{"name": "Branden Gibson"
+	}
+  },
+  {
+    "model": "account.customer",
+    "pk": 3,
+    "fields":{"name": "Rhonda Church"
+	}
+  },
+  {
+    "model": "account.customer",
+    "pk": 4,
+    "fields":{"name": "Georgina Hazel"
+	}
+  }
+]
