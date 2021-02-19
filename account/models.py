@@ -36,9 +36,13 @@ class Transaction(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(Transaction, self).__init__(*args, **kwargs)
-        self.old_instance = copy.deepcopy(self)
+        self.old_instance_org = copy.deepcopy(self)
 
     def save(self, *args, **kwargs):
+        self.full_clean()
+        self.account_to = self.current_instance.account_to
+        self.account_from = self.current_instance.account_from
+        self.amount = self.current_instance.amount
         if not self._state.adding:
             if self.account_from != self.old_instance.account_from:
                 self.old_instance.account_from.save()
@@ -49,14 +53,16 @@ class Transaction(models.Model):
         super(Transaction, self).save(*args, **kwargs)
 
     def clean(self):
+        self.old_instance = copy.deepcopy(self.old_instance_org)
+        self.current_instance = copy.deepcopy(self)
         # Don't allow transactions to the same account
-        if self.account_from == self.account_to:
+        if self.current_instance.account_from == self.current_instance.account_to:
             raise ValidationError(_('Transaction may not be done to the same account.'))
         # Don't allow transactions more than the deposit
         else:
             if not self._state.adding:
                 # if accounts changes
-                if self.account_from != self.old_instance.account_from or self.account_to != self.old_instance.account_to:
+                if self.current_instance.account_from != self.old_instance.account_from or self.current_instance.account_to != self.old_instance.account_to:
                     if self.old_instance.amount > self.old_instance.account_to.deposit:
                         raise ValidationError(
                             {'amount': _(
@@ -64,23 +70,23 @@ class Transaction(models.Model):
                                 self.old_instance.account_to)})
                     self.old_instance.account_from.deposit += self.old_instance.amount
                     self.old_instance.account_to.deposit -= self.old_instance.amount
-                    if self.account_from == self.old_instance.account_from:
-                        self.account_from.deposit = self.old_instance.account_from.deposit
-                    if self.account_to == self.old_instance.account_to:
-                        self.account_to.deposit = self.old_instance.account_to.deposit
+                    if self.current_instance.account_from == self.old_instance.account_from:
+                        self.current_instance.account_from.deposit = self.old_instance.account_from.deposit
+                    if self.current_instance.account_to == self.old_instance.account_to:
+                        self.current_instance.account_to.deposit = self.old_instance.account_to.deposit
                 else:
-                    if self.old_instance.amount > self.account_to.deposit + self.amount:
+                    if self.old_instance.amount > self.current_instance.account_to.deposit + self.current_instance.amount:
                         raise ValidationError(
                             {'amount': _(
                                 'Transaction may not be undone due to insufficient balance of ') + str(
                                 self.account_to)})
-                    self.account_from.deposit += self.old_instance.amount
-                    self.account_to.deposit -= self.old_instance.amount
-            if self.amount > self.account_from.deposit:
+                    self.current_instance.account_from.deposit += self.old_instance.amount
+                    self.current_instance.account_to.deposit -= self.old_instance.amount
+            if self.current_instance.amount > self.current_instance.account_from.deposit:
                 raise ValidationError(
                     {'amount': _('Transaction may not more than the deposit of the customer.')})
-            self.account_from.deposit -= self.amount
-            self.account_to.deposit += self.amount
+            self.current_instance.account_from.deposit -= self.current_instance.amount
+            self.current_instance.account_to.deposit += self.current_instance.amount
 
     def __str__(self):
         return str(self.account_from.customer.name) + ' -> ' + str(self.account_to.customer.name) + ' | ' + str(
