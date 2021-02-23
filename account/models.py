@@ -13,23 +13,22 @@ class Customer(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
-        return str(self.name)
+        return '%d: %s' % (self.pk, self.name)
 
 
 class Account(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='accounts')
     deposit = models.IntegerField(_("Deposit"), default=500)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
-        show = [str(self.customer.name), _("Deposit") + ': ' + str(self.deposit)]
-        return ' | '.join(show)
+        return '%d: %s | %d' % (self.pk, self.customer.name, self.deposit)
 
 
 class Transaction(models.Model):
-    account_from = models.ForeignKey(Account, on_delete=models.CASCADE, null=True, related_name='account_from')
-    account_to = models.ForeignKey(Account, on_delete=models.CASCADE, null=True, related_name='account_to')
+    account_from = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='transactions_from')
+    account_to = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='transactions_to')
     amount = models.PositiveIntegerField(_("Amount"))
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
@@ -89,5 +88,5 @@ class Transaction(models.Model):
             self.current_instance.account_to.deposit += self.current_instance.amount
 
     def __str__(self):
-        return str(self.account_from.customer.name) + ' -> ' + str(self.account_to.customer.name) + ' | ' + str(
-            self.amount)
+        return '%d: %s -> %s | %d' % (
+            self.pk, self.account_from.customer.name, self.account_to.customer.name, self.amount)
