@@ -45,10 +45,10 @@ Customer:
 Name
 
 Account:
-Customer (FK)
+Customer (FK),
 Deposit (Default 500)
 
 Transaction:
-Account from (FK)
-Account to (FK)
+Account from (FK),
+Account to (FK),
 Amount
