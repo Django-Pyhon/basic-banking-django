@@ -7,9 +7,9 @@ Basic banking project with basic money transaction feature
 3. python manage.py migrate
 4. python manage.py runserver
 
-1. (Optional) python manage.py loaddata customers (optional)
-2. (Optional) python manage.py createsuperuser (for admin page, optional)
-3. (Optional) python manage.py test
+- (Optional) python manage.py loaddata customers
+- (Optional) python manage.py createsuperuser (for admin page)
+- (Optional) python manage.py test
 
 # Usage
 ## Endpoints
