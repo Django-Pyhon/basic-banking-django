@@ -43,23 +43,6 @@ class CustomerAPI(views.APIView):
         serializer = CustomerSerializer(customer, many=False)
         return Response(serializer.data)
 
-    def put(self, request, pk, format=None):
-        customer = self.get_object(pk)
-        serializer = CustomerSerializer(instance=customer, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        customer = self.get_object(pk)
-        try:
-            customer.delete()
-            return Response("Customer delete successful!")
-        except ValidationError as e:
-            return Response(e, status=status.HTTP_400_BAD_REQUEST)
-
 
 class CustomerCreateAPI(views.APIView):
     def post(self, request, format=None):
@@ -83,26 +66,6 @@ class AccountAPI(views.APIView):
         serializer = AccountSerializer(account, many=False)
         return Response(serializer.data)
 
-    def put(self, request, pk, format=None):
-        account = self.get_object(pk)
-        post_data = copy.deepcopy(request.data)
-        if "customer" not in post_data:
-            post_data["customer"] = account.customer.id
-        serializer = AccountSerializer(instance=account, data=post_data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        account = self.get_object(pk)
-        try:
-            account.delete()
-            return Response("Account delete successful!")
-        except ValidationError as e:
-            return Response(e, status=status.HTTP_400_BAD_REQUEST)
-
 
 class AccountCreateAPI(views.APIView):
     def post(self, request, format=None):
@@ -125,31 +88,6 @@ class TransactionAPI(views.APIView):
         transaction = self.get_object(pk)
         serializer = TransactionSerializer(transaction, many=False)
         return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        transaction = self.get_object(pk)
-        post_data = copy.deepcopy(request.data)
-        if "account_from" not in post_data:
-            post_data["account_from"] = transaction.account_from.id
-        if "account_to" not in post_data:
-            post_data["account_to"] = transaction.account_to.id
-        serializer = TransactionSerializer(instance=transaction, data=post_data)
-        if serializer.is_valid():
-            try:
-                serializer.save()
-                return Response(serializer.data)
-            except ValidationError as e:
-                return Response(e, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        transaction = self.get_object(pk)
-        try:
-            transaction.delete()
-            return Response("Transaction delete successful!")
-        except ValidationError as e:
-            return Response(e, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TransactionCreateAPI(views.APIView):

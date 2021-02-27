@@ -25,19 +25,10 @@ class TestSetUp(APITestCase):
             obj = Account.objects.create(customer=customer)
             self.accounts.append(obj)
 
-        account_from = Account.objects.get(pk=self.accounts[0].id)
-        account_to = Account.objects.get(pk=self.accounts[1].id)
-        obj = Transaction.objects.create(account_from=account_from, account_to=account_to, amount=200)
+        obj = Transaction.objects.create(account_from=self.accounts[0], account_to=self.accounts[1], amount=200)
         self.transactions.append(obj)
 
-        account_from = Account.objects.get(pk=self.accounts[1].id)
-        account_to = Account.objects.get(pk=self.accounts[2].id)
-        obj = Transaction.objects.create(account_from=account_from, account_to=account_to, amount=300)
-        self.transactions.append(obj)
-
-        account_from = Account.objects.get(pk=self.accounts[2].id)
-        account_to = Account.objects.get(pk=self.accounts[3].id)
-        obj = Transaction.objects.create(account_from=account_from, account_to=account_to, amount=300)
+        obj = Transaction.objects.create(account_from=self.accounts[2], account_to=self.accounts[3], amount=300)
         self.transactions.append(obj)
 
         return super().setUp()
