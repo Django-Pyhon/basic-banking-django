@@ -16,8 +16,8 @@ Basic banking project with basic money transaction feature
 GET				'api/customers/':
 Listing all customers, their accounts, and transactions of accounts
 
-GET PUT DELETE	'api/customer/<int:pk>':
-Details of customer, Update customer, Delete customer
+GET	'api/customer/<int:pk>':
+Details of customer
 
 POST			'api/customer/':
 Create new customer
@@ -25,8 +25,8 @@ Create new customer
 GET				'api/accounts/':
 Listing all accounts
 
-GET PUT DELETE	'api/account/<int:pk>':
-Details of account, Update account, Delete account
+GET 'api/account/<int:pk>':
+Details of account
 
 POST			'api/account/':
 Create new Account
@@ -34,8 +34,8 @@ Create new Account
 GET				'api/transactions/':
 Listing all transactions
 
-GET PUT DELETE	'api/transaction/<int:pk>':
-Details of transaction, Update transaction, Delete transaction
+GET 'api/transaction/<int:pk>':
+Details of transaction
 
 POST			'api/transaction/':
 Create new transaction
